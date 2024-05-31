@@ -47,22 +47,22 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
+                  Müşteri
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email
+                  Adres
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  Telefon
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Barkod
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Status
+                  Durum
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
-                  <span className="sr-only">Edit</span>
+                  <span className="sr-only">Eylem</span>
                 </th>
               </tr>
             </thead>
@@ -78,7 +78,7 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
                       <p>{delivery.name}</p>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
+                  <td className="whitespace-nowrap px-3 py-3 max-w-xs truncate">
                     {delivery.address}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">

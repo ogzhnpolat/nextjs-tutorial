@@ -55,22 +55,22 @@ export default async function JobsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
+                  İş Adı
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email
+                  İş Veren
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  İş Alan
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Tarih
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Status
+                  Durum
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
-                  <span className="sr-only">Edit</span>
+                  <span className="sr-only">Eylemler</span>
                 </th>
               </tr>
             </thead>
@@ -100,6 +100,7 @@ export default async function JobsTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
+                      <JobDetails id={job.id} />
                       <UpdateJob id={job.id} />
                       <DeleteJob id={job.id} />
                     </div>

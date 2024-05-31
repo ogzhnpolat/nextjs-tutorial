@@ -4,12 +4,13 @@ import Breadcrumbs from '@/app/ui/common/breadcrumbs'
 
 import { notFound } from 'next/navigation';
 import { fetchUserSettings } from '@/app/lib/data';
+import { UserSettings } from '@/app/lib/definitions';
 
 
 export default async function Page() {
     
     // in this page we will fetch the user settings and pass them to the form
-    const user = await fetchUserSettings();
+    const user = await fetchUserSettings() as UserSettings;
 
     if (!user) {
         notFound();
