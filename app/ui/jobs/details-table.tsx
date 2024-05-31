@@ -9,7 +9,7 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <div className="md:hidden">
-            {deliveries?.map((delivery) => (
+            {deliveries?.map((delivery : any) => (
               <div
                 key={delivery.id}
                 className="mb-2 w-full rounded-md bg-white p-4"
@@ -67,7 +67,7 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
               </tr>
             </thead>
             <tbody className="bg-white">
-              {deliveries?.map((delivery) => (
+              {deliveries?.map((delivery : any) => (
                 <tr
                   key={delivery.id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
