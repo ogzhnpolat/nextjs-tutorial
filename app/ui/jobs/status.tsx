@@ -16,25 +16,25 @@ export default function JobStatus({ status }: { status: string }) {
     >
       {status === 'active' ? (
         <>
-          Active
+          Aktif
           <ArrowPathIcon className="ml-1 w-4 text-white" />
         </>
       ) : null}
       {status === 'canceled' ? (
         <>
-          Canceled
+          İptal
           <XMarkIcon className="ml-1 w-4 text-gray-500" />
         </>
       ) : null}
       {status === 'pending' ? (
         <>
-          Pending
+          Beklemede
           <ClockIcon className="ml-1 w-4 text-gray-500" />
         </>
       ) : null}
       {status === 'done' ? (
         <>
-          Paid
+          Tamamlandı
           <CheckIcon className="ml-1 w-4 text-white" />
         </>
       ) : null}

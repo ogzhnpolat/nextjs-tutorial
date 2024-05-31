@@ -1,4 +1,4 @@
-import AcmeLogo from '@/app/ui/acme-logo';
+import AcmeLogo from '@/app/ui/logo';
 import { Metadata } from 'next';
 import RegisterForm from '../ui/register-form';
 

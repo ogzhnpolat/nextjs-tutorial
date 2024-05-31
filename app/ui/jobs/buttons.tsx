@@ -1,5 +1,6 @@
-import { deleteJob } from '@/app/lib/actions/jobs';
-import { EyeIcon, MapPinIcon, PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { deleteJob, updateDeliveryStatus } from '@/app/lib/actions/jobs';
+import { CheckIcon, EyeIcon, MapPinIcon, PencilIcon, PhoneIcon, PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { revalidatePath } from 'next/cache';
 import Link from 'next/link';
 
 export function CreateJob() {
@@ -57,5 +58,42 @@ export function GetDirection({ address }: { address: string }) {
     >
       <MapPinIcon className="w-5" />
     </Link>
+  );
+}
+
+export function CallCustomer({ phone }: { phone: string }) {
+  return (
+    <a href={`tel:${phone}`} className="rounded-md border p-2 hover:bg-gray-100">
+      <span className="sr-only">Ara</span>
+      <PhoneIcon className="w-5" />
+    </a>
+  );
+}
+
+export function CompleteDelivery({ id, job_id }: { id: string, job_id: string }) {
+  const updateJobWithId = updateDeliveryStatus.bind(null, id, job_id, 'done');
+
+  revalidatePath(`/dashboard/jobs/${job_id}`);
+
+  return (
+    <form action={updateJobWithId}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">Tamamla</span>
+        <CheckIcon className="w-5" />
+      </button>
+    </form>
+  );
+}
+
+export function CancelDelivery({ id, job_id }: { id: string, job_id: string }) {
+  const updateJobWithId = updateDeliveryStatus.bind(null, id, job_id, 'canceled');
+
+  return (
+    <form action={updateJobWithId}>
+      <button className="rounded-md border p-2 hover:bg-gray-100">
+        <span className="sr-only">İptal</span>
+        <XMarkIcon className="w-5" />
+      </button>
+    </form>
   );
 }

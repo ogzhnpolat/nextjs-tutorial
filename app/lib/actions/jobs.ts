@@ -149,6 +149,17 @@ export async function insertJob(title: string, team: string, from_user: string, 
     }
 }
 
+export async function deleteJob(id: string) {
+    try {
+        await sql`DELETE FROM jobs WHERE id = ${id}`;
+        revalidatePath('/dashboard/jobs');
+    } catch (error) {
+        return {
+            message: 'Database Error: Failed to Delete Job.'
+        }
+    }
+}
+
 export async function insertDeliveries(job_id: string, records: any[]) {
     try {
         for (const record of records) {
@@ -196,13 +207,18 @@ export async function updateDeliveriesOrder(deliveries: any[]) {
     }
 }
 
-export async function deleteJob(id: string) {
+export async function updateDeliveryStatus(id: string, job_id: string, status: string) {
     try {
-        await sql`DELETE FROM jobs WHERE id = ${id}`;
-        revalidatePath('/dashboard/jobs');
+        await sql`
+        UPDATE deliveries
+        SET status = ${status}
+        WHERE id = ${id}`;
+        
+        revalidatePath(`/dashboard/jobs/${job_id}`);
+        redirect(`/dashboard/jobs/${job_id}`);
     } catch (error) {
         return {
-            message: 'Database Error: Failed to Delete Job.'
+            message: 'Database Error: Failed to Update Delivery Status.'
         }
     }
 }

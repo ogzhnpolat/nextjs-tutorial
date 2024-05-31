@@ -1,8 +1,8 @@
-import { UpdateJob, DeleteJob, GetDirection } from '@/app/ui/jobs/buttons';
-import { TruckIcon } from '@heroicons/react/24/outline';
+import { UpdateJob, DeleteJob, GetDirection, CompleteDelivery, CallCustomer, CancelDelivery } from '@/app/ui/jobs/buttons';
+import { PhoneIcon, TruckIcon } from '@heroicons/react/24/outline';
 import JobStatus from '@/app/ui/jobs/status';
 
-export default async function JobDetailsTable({ deliveries }: { deliveries: any }) {
+export default async function JobDetailsTable({ job_id, deliveries }: { job_id: string, deliveries: any }) {
 
   return (
     <div className="mt-6 flow-root">
@@ -22,13 +22,13 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
                     </div>
                     <p className="text-sm text-gray-500">{delivery.address}</p>
                   </div>
-                  <JobStatus status={delivery.staus} />
+                  <JobStatus status={delivery.status} />
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
                       {/* phone number link */}
-                      <a href={`tel:${delivery.phone}`} className="text-blue-600">
+                      <a href={`tel:${delivery.phone}`} className="text-blue-600 flex">
                         {delivery.phone}
                       </a>
                     </p>
@@ -36,8 +36,9 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
                   </div>
                   <div className="flex justify-end gap-2">
                     <GetDirection address={`${delivery.latitude},${delivery.longitude}`} />
-                    <UpdateJob id={delivery.id} />
-                    <DeleteJob id={delivery.id} />
+                    <CallCustomer phone={delivery.phone} />
+                    <CompleteDelivery id={delivery.id} job_id={job_id} />
+                    <CancelDelivery id={delivery.id} job_id={job_id} />
                   </div>
                 </div>
               </div>
@@ -83,6 +84,7 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <a href={`tel:${delivery.phone}`} className="text-blue-600">
+                      <PhoneIcon className="h-5 w-5 mr-1" />
                       {delivery.phone}
                     </a>
                   </td>
@@ -95,8 +97,9 @@ export default async function JobDetailsTable({ deliveries }: { deliveries: any 
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <GetDirection address={`${delivery.latitude},${delivery.longitude}`} />
-                      <UpdateJob id={delivery.id} />
-                      <DeleteJob id={delivery.id} />
+                      <CallCustomer phone={delivery.phone} />
+                      <CompleteDelivery id={delivery.id} job_id={job_id} />
+                      <CancelDelivery id={delivery.id} job_id={job_id} />
                     </div>
                   </td>
                 </tr>
