@@ -9,6 +9,17 @@ export type User = {
   password: string;
 };
 
+export type Job = {
+  id: string;
+  title: string;
+  team: string;
+  from_user: string;
+  to_user: string;
+  data: JSON;
+  date_created: string;
+  status: 'active' | 'cancelled' | 'done' | 'pending';
+};
+
 export type Customer = {
   id: string;
   name: string;
@@ -85,4 +96,18 @@ export type InvoiceForm = {
   customer_id: string;
   amount: number;
   status: 'pending' | 'paid';
+};
+
+export type UserSettings = {
+  id: string;
+  email: string;
+  name: string;
+  type: 'admin' | 'manager' | 'employee' | 'default';
+  team: string | null;
+};
+
+export type TeamForm = {
+  id: string;
+  name: string;
+  address: string;
 };

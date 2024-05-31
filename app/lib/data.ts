@@ -7,23 +7,27 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  Job,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { unstable_noStore as noStore } from 'next/cache';
+import { auth } from '@/auth';
 
 export async function fetchRevenue() {
   // Add noStore() here to prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
+  noStore();
 
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return data.rows;
   } catch (error) {
@@ -33,6 +37,13 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore();
+
+  // 2 seconds delay to simulate a slow network
+  console.log('Fetching latest invoices...');
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.log('Data fetch completed after 1 seconds.');
+
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -53,6 +64,7 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore();
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -88,10 +100,12 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
+/* Invoice Actions Start */
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  noStore();
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -124,6 +138,7 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
+  noStore();
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -145,6 +160,7 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+  noStore();
   try {
     const data = await sql<InvoiceForm>`
       SELECT
@@ -169,7 +185,11 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
+/* Invoice Actions End */
+
+/* Customer Actions Start */
 export async function fetchCustomers() {
+  noStore();
   try {
     const data = await sql<CustomerField>`
       SELECT
@@ -188,6 +208,7 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query: string) {
+  noStore();
   try {
     const data = await sql<CustomersTableType>`
 		SELECT
@@ -219,8 +240,11 @@ export async function fetchFilteredCustomers(query: string) {
     throw new Error('Failed to fetch customer table.');
   }
 }
+/* Customer Actions End */
 
+/* User Actions Start */
 export async function getUser(email: string) {
+  noStore();
   try {
     const user = await sql`SELECT * FROM users WHERE email=${email}`;
     return user.rows[0] as User;
@@ -228,4 +252,113 @@ export async function getUser(email: string) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
   }
+}
+/* User Actions End */
+
+export async function fetchUserSettings() {
+    const session = await auth();
+
+    console.log('session', session);
+
+    if (!session) {
+        return null;
+    }
+
+    const user = session.user;
+
+    try {
+        const userSettings = await sql`
+        SELECT id, name, email, type, team FROM users WHERE email = ${user?.email}`;
+        return userSettings.rows[0];
+    } catch (error) {
+        return null;
+    }
+}
+
+/* Team Actions Start */
+export async function fetchTeam() {
+    const session = await auth();
+
+    if (!session) {
+        return null;
+    }
+
+    const user = session.user;
+
+    try {
+        const team = await sql`
+        SELECT team FROM users WHERE email = ${user?.email}`;
+        return team.rows[0].team;
+    } catch (error) {
+        return null;
+    }
+}
+
+export async function fetchFilteredTeamMembers(query: string, team: string, currentPage: number) {
+    noStore();
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    try {
+        const teamMembers = await sql<User>`
+        SELECT id, name, email, team FROM users
+        WHERE name ILIKE ${`%${query}%`} AND team = ${team}
+        ORDER BY name ASC
+        LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}`;
+
+        return teamMembers.rows;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch team members.');
+    }
+}
+
+export async function fetchTeamMembersPages(query: string, team: string) {
+    noStore();
+    try {
+        const count = await sql`
+        SELECT COUNT(*)
+        FROM users
+        WHERE name ILIKE ${`%${query}%`} AND team = ${team}`;
+
+        const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+        return totalPages;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch total number of team members.');
+    }
+}
+
+export async function fetchTeamMembers(team: string) {
+    noStore();
+    try {
+        const teamMembers = await sql<User>`
+        SELECT id, name, email, team FROM users
+        WHERE team = ${team}
+        ORDER BY name ASC`;
+
+        return teamMembers.rows;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch team members.');
+    }
+}
+/* Team Actions End */
+
+/* Jobs Actions Start */
+export async function fetchFilteredJobs(query: string, team: string, currentPage: number) {
+    noStore();
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    try {
+        const jobs = await sql<Job>`
+        SELECT * FROM jobs
+        WHERE title ILIKE ${`%${query}%`} AND team = ${team}
+        ORDER BY date_created DESC
+        LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}`;
+
+        return jobs.rows;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch jobs.');
+    }
 }
