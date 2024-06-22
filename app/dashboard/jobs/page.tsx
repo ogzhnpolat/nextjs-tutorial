@@ -5,8 +5,9 @@ import { CreateJob } from '@/app/ui/jobs/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchInvoicesPages, fetchTeam } from '@/app/lib/data';
+import { fetchTeam } from '@/app/lib/data';
 import { Metadata } from 'next';
+import { fetchJobsPages } from '@/app/lib/actions/jobs';
 
 export const metadata: Metadata = {
   title: 'İşler',
@@ -25,7 +26,7 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
   const team = await fetchTeam();
 
-  const totalPages = await fetchInvoicesPages(query);
+  const totalPages = await fetchJobsPages(query, team);
 
   return (
     <div className="w-full">

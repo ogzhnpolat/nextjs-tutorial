@@ -19,15 +19,8 @@ export async function fetchRevenue() {
   noStore();
 
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
-
-    console.log('Data fetch completed after 3 seconds.');
 
     return data.rows;
   } catch (error) {
@@ -38,11 +31,6 @@ export async function fetchRevenue() {
 
 export async function fetchLatestInvoices() {
   noStore();
-
-  // 2 seconds delay to simulate a slow network
-  console.log('Fetching latest invoices...');
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('Data fetch completed after 1 seconds.');
 
   try {
     const data = await sql<LatestInvoiceRaw>`
@@ -345,20 +333,3 @@ export async function fetchTeamMembers(team: string) {
 /* Team Actions End */
 
 /* Jobs Actions Start */
-export async function fetchFilteredJobs(query: string, team: string, currentPage: number) {
-    noStore();
-    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
-    try {
-        const jobs = await sql<Job>`
-        SELECT * FROM jobs
-        WHERE title ILIKE ${`%${query}%`} AND team = ${team}
-        ORDER BY date_created DESC
-        LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}`;
-
-        return jobs.rows;
-    } catch (error) {
-        console.error('Database Error:', error);
-        throw new Error('Failed to fetch jobs.');
-    }
-}

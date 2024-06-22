@@ -1,11 +1,12 @@
 'use server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, unstable_noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { checkIfGeocodeExists, geocode, saveGeocode } from './geocode';
 import { optimizeRoute } from './routeServices';
 import { getUserId } from './common';
+import { Job } from '../definitions';
 
 // This is temporary until @types/react-dom is updated
 export type State = {
@@ -17,6 +18,8 @@ export type State = {
     };
     message?: string | null;
 };
+
+const ITEMS_PER_PAGE = 10;
 
 /* Jobs Actions */
 const JobFormSchema = z.object({
@@ -220,5 +223,39 @@ export async function updateDeliveryStatus(id: string, job_id: string, status: s
         return {
             message: 'Database Error: Failed to Update Delivery Status.'
         }
+    }
+}
+
+export async function fetchFilteredJobs(query: string, team: string, currentPage: number) {
+    unstable_noStore();
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    try {
+        const jobs = await sql<Job>`
+        SELECT * FROM jobs
+        WHERE title ILIKE ${`%${query}%`} AND team = ${team}
+        ORDER BY date_created DESC
+        LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}`;
+
+        return jobs.rows;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch jobs.');
+    }
+}
+
+export async function fetchJobsPages(query: string, team: string) {
+    unstable_noStore();
+    try {
+        const count = await sql`
+        SELECT COUNT(*)
+        FROM jobs
+        WHERE title ILIKE ${`%${query}%`} AND team = ${team}`;
+
+        const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+        return totalPages;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch total number of jobs.');
     }
 }
