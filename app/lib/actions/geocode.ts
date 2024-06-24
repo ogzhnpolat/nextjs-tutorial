@@ -22,8 +22,11 @@ export async function geocode(address: string) {
 
     const data = await response.json();
 
-    const { lat, lng } = data.results[0].geometry.location;
+    if (data.status == 'ZERO_RESULTS') {
+        return { lat: 0, lng: 0 };
+    }
 
+    const { lat, lng } = data.results[0].geometry.location;
 
     return { lat, lng };
 }
@@ -55,7 +58,7 @@ export async function saveGeocode(receiver: string, address: string, latitude: n
 function cleanString(input: string) {
     var output = "";
     // remove .
-    output = input.replace(/\./g, '');
+    output = input?.replace(/\./g, '');
 
     return output;
 }

@@ -112,8 +112,10 @@ export async function createJob(prevState: State, formData: FormData) {
         })
         .on('end', async function () {
 
+            // insert job to database
             const job_id = await insertJob(title, team, user_id, member, dateCreated, status);
 
+            // insert deliveries to database
             await insertDeliveries(job_id, records);
 
             const insertedDeliveries = await getDeliveriesByJobId(job_id);
@@ -124,8 +126,7 @@ export async function createJob(prevState: State, formData: FormData) {
                 waypoints: insertedDeliveries
             });
 
-            console.log(optimizedRoute);
-
+            // update deliveries order
             await updateDeliveriesOrder(optimizedRoute.routes[0].steps);
 
         });

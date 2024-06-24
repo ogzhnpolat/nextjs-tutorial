@@ -1,8 +1,8 @@
 import { UpdateJob, DeleteJob, JobDetails } from '@/app/ui/jobs/buttons';
 import { formatDateToLocal } from '@/app/lib/utils';
-import { fetchFilteredJobs } from '@/app/lib/data';
 import { TruckIcon } from '@heroicons/react/24/outline';
 import JobStatus from '@/app/ui/invoices/status';
+import { fetchFilteredJobs } from '@/app/lib/actions/jobs';
 
 export default async function JobsTable({
   query,

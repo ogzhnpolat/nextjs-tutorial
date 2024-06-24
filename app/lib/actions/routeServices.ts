@@ -47,17 +47,17 @@ export async function optimizeRoute(data: any) {
 
     const body = {
         jobs: [
-            ...data.waypoints.map((waypoint: any, index: number) => {
+            ...data.waypoints.filter((waypoint: any) => waypoint.longitude !== 0 && waypoint.latitude !== 0).map((waypoint: any, index: number) => {
                 return { id: index, description: waypoint.id, location: [waypoint.longitude, waypoint.latitude] }
             }),
         ],
         vehicles: [
             {
-            id: 1,
-            profile: "driving-car",
-            start: [data.start.lng, data.start.lat],
-            end: [data.end.lng, data.end.lat],
-        }
+                id: 1,
+                profile: "driving-car",
+                start: [data.start.lng, data.start.lat],
+                end: [data.end.lng, data.end.lat],
+            }
         ]
     };
 
